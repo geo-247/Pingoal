@@ -6,7 +6,7 @@ pygame.init()
 
 screen_width, screen_height = 480, 360
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Pingoal")
+pygame.display.set_caption("Pongoal")
 pygame.display.set_icon(pygame.image.load("assets/icon_.png"))
 
 def play_window():

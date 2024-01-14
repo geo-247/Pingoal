@@ -3,7 +3,7 @@ import sys
 import math
 from random import *
 from button import Button  
-
+import threading , time
 pygame.init()
 
 screen_width, screen_height = 480, 360
@@ -28,8 +28,14 @@ def drawBall(x,y,cs):
     resized_ball = pygame.transform.scale(cs, (40, 40))
     screen.blit(resized_ball,(x,y))
 
+def reset_collision_thread():
+    global reset_collision
+    while True:
+        time.sleep(0.3)
+        reset_collision = True
 
 def play_window():
+    global reset_collision
     #player
     playerImg = pygame.image.load("assets/player.png")
     playerX,playerY = 70,100
@@ -62,33 +68,37 @@ def play_window():
         #     csYchange-=1
         # elif csY<=30:
         #     csYChange+=1
-        import time
-        if ballX<=0:
+    
+        if ballX<=0 :
             ballX,ballY=screen_width//2 , screen_height//2
             scoreC+=1
             print("\nComputer Scored")
             angle=randint(-30,30)
             time.sleep(2)
-        elif ballX>=480:
+        elif ballX>=480 :
             ballX,ballY=screen_width//2 , screen_height//2
             scoreP+=1
             print("\nPlayerScored")
             angle=randint(-30,30)
             time.sleep(2)
         #ball rebounding and angle turns
-        if ballY<=30:
+        if ballY<=30 and reset_collision:
             angle=randint(-70,-30)
-        elif ballY>=300:
+            reset_collision=False
+        elif ballY>=300 and reset_collision:
             angle=randint(30,70)
+            reset_collision=False
 
         #collisions logic with rebounding
-        if(isCollision(playerX,playerY,ballX,ballY)):
+        if(isCollision(playerX,playerY,ballX,ballY) and reset_collision):
             angle = randint(-70,-30)
             print("Ball , player collision detected")
-        elif(isCollision(csX,csY,ballX,ballY)):
+            reset_collision=False
+        elif(isCollision(csX,csY,ballX,ballY) and reset_collision):
             angle = randint(30,70)
             print("Ball , enemy collision detected")
-        
+            reset_collision=False
+
         screen.fill("BLACK")
         bg = pygame.image.load("assets/bg.png")
         bg = pygame.transform.scale(bg, (screen_width + 260, 180 + screen_height))
@@ -106,6 +116,9 @@ def play_window():
         pygame.display.update()
 
 def main_menu():
+    reset_thread = threading.Thread(target=reset_collision_thread)
+    reset_thread.daemon = True
+    reset_thread.start()
     running = True
     button_size = (100, 100)  
 

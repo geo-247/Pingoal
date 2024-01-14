@@ -43,7 +43,9 @@ def play_window():
     csYChange=0
 
     angle=30
+    scoreP,scoreC=0,0
     while True:
+   
         mouseX,mouseY = pygame.mouse.get_pos()
         playerY = mouseY #playerY movement is done with the mouse
 
@@ -60,7 +62,19 @@ def play_window():
         #     csYchange-=1
         # elif csY<=30:
         #     csYChange+=1
-        
+        import time
+        if ballX<=0:
+            ballX,ballY=screen_width//2 , screen_height//2
+            scoreC+=1
+            print("\nComputer Scored")
+            angle=randint(-30,30)
+            time.sleep(2)
+        elif ballX>=480:
+            ballX,ballY=screen_width//2 , screen_height//2
+            scoreP+=1
+            print("\nPlayerScored")
+            angle=randint(-30,30)
+            time.sleep(2)
         #ball rebounding and angle turns
         if ballY<=30:
             angle=randint(-70,-30)

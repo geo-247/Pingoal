@@ -1,6 +1,7 @@
 import pygame
 import sys
 import math
+from random import *
 from button import Button  
 
 pygame.init()
@@ -10,12 +11,13 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Pongoal")
 pygame.display.set_icon(pygame.image.load("assets/icon_.png"))
 
-def is_collision(x1, y1, x2, y2):
-    distance = math.sqrt(math.pow(x1 - x2, 2) + (math.pow(y1 - y2, 2))) #applying distance formula
-    if distance < 27:
+def isCollision(x1, y1, x2, y2):
+    distance = math.sqrt(math.fabs(math.pow(x1 - x2, 2) + (math.pow(y1 - y2, 2))))
+    if distance < 20:
         return True
     else:
         return False
+
 def player(x,y,playerImg):
     resized_playerImg = pygame.transform.scale(playerImg, (30, 90))
     screen.blit(resized_playerImg,(x,y))
@@ -23,7 +25,7 @@ def drawCs(x,y,cs):
     resized_cs = pygame.transform.scale(cs, (30, 90))
     screen.blit(resized_cs,(x,y))
 def drawBall(x,y,cs):
-    resized_ball = pygame.transform.scale(cs, (30, 90))
+    resized_ball = pygame.transform.scale(cs, (40, 40))
     screen.blit(resized_ball,(x,y))
 
 
@@ -35,6 +37,12 @@ def play_window():
     csImg = pygame.image.load("assets/enemy.png")
     csX,csY = 390,100
     
+    #ball
+    ballImg = pygame.image.load("assets/ball.png")
+    ballX,ballY = screen_width//2 , screen_height//2
+    csYChange=0
+
+    angle=30
     while True:
         mouseX,mouseY = pygame.mouse.get_pos()
         playerY = mouseY #playerY movement is done with the mouse
@@ -43,20 +51,44 @@ def play_window():
             playerY = 30
         elif playerY >= 250:
             playerY = 250
+        #Movement of the enemy
+        if ballY>csY:
+            csYChange =1
+        else:
+            csYChange=-1
+        # if csY>=250 :
+        #     csYchange-=1
+        # elif csY<=30:
+        #     csYChange+=1
+        
+        #ball rebounding and angle turns
+        if ballY<=30:
+            angle=randint(-70,-30)
+        elif ballY>=300:
+            angle=randint(30,70)
 
-
+        #collisions logic with rebounding
+        if(isCollision(playerX,playerY,ballX,ballY)):
+            angle = randint(-70,-30)
+            print("Ball , player collision detected")
+        elif(isCollision(csX,csY,ballX,ballY)):
+            angle = randint(30,70)
+            print("Ball , enemy collision detected")
+        
         screen.fill("BLACK")
         bg = pygame.image.load("assets/bg.png")
         bg = pygame.transform.scale(bg, (screen_width + 260, 180 + screen_height))
         screen.blit(bg, (-130, -80))
-
+        ballX+=math.cos(angle)*1.2
+        ballY+=math.sin(angle)*1.2
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
+        csY+=csYChange
         player(playerX,playerY,playerImg)#drawing player
         drawCs(csX,csY,csImg)#drawing enemy
+        drawBall(ballX,ballY,ballImg)#drawing ball
         pygame.display.update()
 
 def main_menu():

@@ -20,8 +20,11 @@ def player(x,y,playerImg):
     resized_playerImg = pygame.transform.scale(playerImg, (30, 90))
     screen.blit(resized_playerImg,(x,y))
 def drawCs(x,y,cs):
-    resized_playerImg = pygame.transform.scale(cs, (30, 90))
-    screen.blit(resized_playerImg,(x,y))
+    resized_cs = pygame.transform.scale(cs, (30, 90))
+    screen.blit(resized_cs,(x,y))
+def drawBall(x,y,cs):
+    resized_ball = pygame.transform.scale(cs, (30, 90))
+    screen.blit(resized_ball,(x,y))
 
 
 def play_window():

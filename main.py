@@ -4,8 +4,10 @@ import math
 from random import *
 from button import Button
 import threading, time
-
+import pygame.mixer
 pygame.init()
+pygame.mixer.music.load ( "sound/sound.mp3" )
+pygame.mixer.music.play(loops=-1)           
 
 screen_width, screen_height = 480, 360
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -90,6 +92,7 @@ def play_window():
             scoreC += 1
             print("\nComputer Scored")
             displayText("Computer Scored !",70 , 0)
+         
             pygame.display.update()
 
             time.sleep(2)
@@ -98,6 +101,7 @@ def play_window():
             scoreP += 1
             print("\nPlayer Scored")
             displayText("Player Scored !",90 , 0)
+       
             pygame.display.update()
 
             time.sleep(2)

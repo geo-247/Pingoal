@@ -12,6 +12,8 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Pongoal")
 pygame.display.set_icon(pygame.image.load("assets/icon_.png"))
 
+
+
 def isCollision(x1, y1, x2, y2, width1, height1, width2, height2):
     rect1 = pygame.Rect(x1, y1, width1, height1)
     rect2 = pygame.Rect(x2, y2, width2, height2)
@@ -36,6 +38,13 @@ def reset_collision_thread():
         reset_collision = True
 
 def play_window():
+#fonts
+    f1 = pygame.font.Font("assets\CartoonTown.ttf",45)
+    def displayText(text,x,y):
+        global screen
+        
+        myText= f1.render(text, True, "black")
+        screen.blit(myText,[x,y])
     global reset_collision
     # player
     playerImg = pygame.image.load("assets/player.png")
@@ -53,6 +62,8 @@ def play_window():
     angle = uniform(30, 150)  # Use uniform for a continuous range
     scoreP, scoreC = 0, 0
     while True:
+
+     
         mouseX, mouseY = pygame.mouse.get_pos()
         playerY = mouseY  # playerY movement is done with the mouse
 
@@ -72,18 +83,23 @@ def play_window():
             csY = 30
         elif csY >= 250:
             csY = 250
-
-        if ballX <= 0:
+    
+        #scoring 
+        if ballX <= 0 and (ballY>=30 and ballY<=250):
             ballX, ballY = screen_width // 2, screen_height // 2
             scoreC += 1
             print("\nComputer Scored")
-            angle = uniform(30, 150)
+            displayText("Computer Scored !",70 , 0)
+            pygame.display.update()
+
             time.sleep(2)
-        elif ballX >= screen_width:
+        elif ballX >= screen_width and (ballY>=30 and ballY<=250):
             ballX, ballY = screen_width // 2, screen_height // 2
             scoreP += 1
             print("\nPlayer Scored")
-            angle = uniform(30, 150)
+            displayText("Player Scored !",90 , 0)
+            pygame.display.update()
+
             time.sleep(2)
 
         # Ball rebounding and angle turns
@@ -115,22 +131,26 @@ def play_window():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
         csY += csYChange
         player(playerX, playerY, playerImg)  # drawing player
         drawCs(csX, csY, csImg)  # drawing enemy
         drawBall(ballX, ballY, ballImg)  # drawing ball
+        displayText(str(scoreP),0,150)  
+        displayText(str(scoreC),screen_width-20,150)
         pygame.display.update()
+
 
 def main_menu():
     reset_thread = threading.Thread(target=reset_collision_thread)
     reset_thread.daemon = True
     reset_thread.start()
     running = True
-    button_size = (100, 100)
+    button_size = (100, 50)
 
     play_button = Button(
-        image=pygame.transform.scale(pygame.image.load("assets/play.png"), button_size),
-        pos=(250, 250),
+        image=pygame.transform.scale(pygame.image.load("assets/p.png"), button_size),
+        pos=(250, 300),
         text_input="",
         font=pygame.font.Font(None, 36),
         base_color=(255, 255, 255),
@@ -139,9 +159,9 @@ def main_menu():
 
     while running:
         screen.fill((0, 0, 0))
-        bg = pygame.image.load("assets/menu.png")
-        bg = pygame.transform.scale(bg, (screen_width + 260, 180 + screen_height))
-        screen.blit(bg, (-130, -80))
+        bg = pygame.image.load("assets/b.png")
+        bg = pygame.transform.scale(bg, (screen_width  ,   screen_height))
+        screen.blit(bg, (0,0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
